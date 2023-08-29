@@ -1,0 +1,56 @@
+class StockPortfolio {
+    private Map<String, Stock> portfolio;
+
+    public StockPortfolio() {
+        portfolio = new HashMap<>();
+    }
+
+    public void addStock(Stock stock) {
+        portfolio.put(stock.getSymbol(), stock);
+    }
+
+    public void removeStock(String symbol) {
+        portfolio.remove(symbol);
+    }
+
+    public double getPortfolioValue() {
+        double totalValue = 0;
+        for (Stock stock : portfolio.values()) {
+            totalValue += stock.getValue();
+        }
+        return totalValue;
+    }
+
+    public void printPortfolio() {
+        System.out.println("---- Portfolio ----");
+        for (Stock stock : portfolio.values()) {
+            System.out.println("Symbol: " + stock.getSymbol());
+            System.out.println("Name: " + stock.getName());
+            System.out.println("Price: " + stock.getPrice());
+            System.out.println("Quantity: " + stock.getQuantity());
+            System.out.println("Value: " + stock.getValue());
+            System.out.println("----------------------------------");
+        }
+        System.out.println("Total Portfolio Value: " + getPortfolioValue());
+    }
+
+    public void updateStockPrice(String symbol, double newPrice) {
+        Stock stock = portfolio.get(symbol);
+        if (stock != null) {
+            stock.setPrice(newPrice);
+            System.out.println("Stock price updated successfully.");
+        } else {
+            System.out.println("Stock not found in the portfolio.");
+        }
+    }
+
+    public void updateStockQuantity(String symbol, int newQuantity) {
+        Stock stock = portfolio.get(symbol);
+        if (stock != null) {
+            stock.setQuantity(newQuantity);
+            System.out.println("Stock quantity updated successfully.");
+        } else {
+            System.out.println("Stock not found in the portfolio.");
+        }
+    }
+}
