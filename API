@@ -1,0 +1,54 @@
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+
+public class AlphaAdvantageAPI {
+    private final String apiKey;
+    private final String baseUrl = "https://www.alphavantage.co";
+
+    public AlphaAdvantageAPI(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public String getStockPrice(String symbol) throws IOException, InterruptedException {
+        String endpoint = "/query";
+        String function = "GLOBAL_QUOTE";
+        String encodedSymbol = URLEncoder.encode(symbol, StandardCharsets.UTF_8);
+
+        String url = baseUrl + endpoint + "?function=" + function + "&symbol=" + encodedSymbol + "&apikey=" + apiKey;
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(java.net.URI.create(url))
+                .build();
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            String responseBody = response.body();
+            // Parse the JSON response to extract the stock price
+            // You may use a JSON parsing library like Gson or Jackson for this step
+            return responseBody;
+        } else {
+            return null;
+        }
+    }
+
+    public static void main(String[] args) {
+        String apiKey = "TTKMXCG0893OBVOR";
+        AlphaAdvantageAPI alphaApi = new AlphaAdvantageAPI(apiKey);
+        try {
+            String stockPrice = alphaApi.getStockPrice("AAPL");
+            if (stockPrice != null) {
+                System.out.println("The current stock price of AAPL is " + stockPrice);
+            } else {
+                System.out.println("Unable to retrieve stock price");
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
