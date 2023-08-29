@@ -1,1 +1,68 @@
+public class Main {
+    public static void main(String[] args) {
+        StockPortfolio portfolio = new StockPortfolio();
+        Scanner scanner = new Scanner(System.in);
 
+        while (true) {
+            System.out.println("What would you like to do?");
+            System.out.println("1. Add a stock");
+            System.out.println("2. Remove a stock");
+            System.out.println("3. Update stock price");
+            System.out.println("4. Update stock quantity");
+            System.out.println("5. Print portfolio");
+            System.out.println("6. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // consume the newline character
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter stock symbol:");
+                    String symbol = scanner.nextLine();
+                    System.out.println("Enter stock name:");
+                    String name = scanner.nextLine();
+                    System.out.println("Enter stock price:");
+                    double price = scanner.nextDouble();
+                    System.out.println("Enter stock quantity:");
+                    int quantity = scanner.nextInt();
+                    scanner.nextLine(); // consume the newline character
+                    Stock stock = new Stock(symbol, name, price, quantity);
+                    portfolio.addStock(stock);
+                    System.out.println("Stock added successfully.");
+                    break;
+                case 2:
+                    System.out.println("Enter stock symbol to remove:");
+                    String symbolToRemove = scanner.nextLine();
+                    portfolio.removeStock(symbolToRemove);
+                    System.out.println("Stock removed successfully.");
+                    break;
+                case 3:
+                    System.out.println("Enter stock symbol to update price:");
+                    String symbolToUpdatePrice = scanner.nextLine();
+                    System.out.println("Enter new stock price:");
+                    double newPrice = scanner.nextDouble();
+                    scanner.nextLine(); // consume the newline character
+                    portfolio.updateStockPrice(symbolToUpdatePrice, newPrice);
+                    break;
+                case 4:
+                    System.out.println("Enter stock symbol to update quantity:");
+                    String symbolToUpdateQuantity = scanner.nextLine();
+                    System.out.println("Enter new stock quantity:");
+                    int newQuantity = scanner.nextInt();
+                    scanner.nextLine(); // consume the newline character
+                    portfolio.updateStockQuantity(symbolToUpdateQuantity, newQuantity);
+                    break;
+                case 5:
+                    portfolio.printPortfolio();
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+}
