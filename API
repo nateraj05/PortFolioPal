@@ -1,54 +1,44 @@
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class AlphaAdvantageAPI {
-    private final String apiKey;
-    private final String baseUrl = "https://www.alphavantage.co";
-
-    public AlphaAdvantageAPI(String apiKey) {
-        this.apiKey = apiKey;
-    }
-
-    public String getStockPrice(String symbol) throws IOException, InterruptedException {
-        String endpoint = "/query";
-        String function = "GLOBAL_QUOTE";
-        String encodedSymbol = URLEncoder.encode(symbol, StandardCharsets.UTF_8);
-
-        String url = baseUrl + endpoint + "?function=" + function + "&symbol=" + encodedSymbol + "&apikey=" + apiKey;
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(java.net.URI.create(url))
-                .build();
-
-        HttpClient client = HttpClient.newHttpClient();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() == 200) {
-            String responseBody = response.body();
-            // Parse the JSON response to extract the stock price
-            // You may use a JSON parsing library like Gson or Jackson for this step
-            return responseBody;
-        } else {
-            return null;
-        }
-    }
+    private static final String API_KEY = "YOUR_API_KEY";
+    private static final String API_ENDPOINT = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=" + API_KEY;
 
     public static void main(String[] args) {
-        String apiKey = "TTKMXCG0893OBVOR";
-        AlphaAdvantageAPI alphaApi = new AlphaAdvantageAPI(apiKey);
         try {
-            String stockPrice = alphaApi.getStockPrice("AAPL");
-            if (stockPrice != null) {
-                System.out.println("The current stock price of AAPL is " + stockPrice);
-            } else {
-                System.out.println("Unable to retrieve stock price");
+            // Make an HTTP request to the Alpha Vantage API and get the JSON response
+            String jsonResponse = getJsonResponse(API_ENDPOINT);
+
+            // Parse the JSON response
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(jsonResponse);
+
+            // Access the values from the JSON response
+            // For example, if the JSON response is an object with a "symbol" field
+            String symbol = jsonNode.get("symbol").asText();
+            System.out.println("Symbol: " + symbol);
+
+            // If the JSON response is an object with a "timeSeries" field containing an array of objects
+            JsonNode timeSeriesNode = jsonNode.get("timeSeries");
+            for (JsonNode element : timeSeriesNode) {
+                String date = element.get("date").asText();
+                double closePrice = element.get("close").asDouble();
+                System.out.println("Date: " + date + ", Close Price: " + closePrice);
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    private static String getJsonResponse(String url) throws IOException {
+        try (java.util.Scanner scanner = new java.util.Scanner(new URL(url).openStream(), StandardCharsets.UTF_8.toString())) {
+            scanner.useDelimiter("\\A");
+            return scanner.hasNext() ? scanner.next() : "";
+        }
+    }
 }
+Thank you for providing the c
