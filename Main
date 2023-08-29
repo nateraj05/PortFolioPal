@@ -1,3 +1,11 @@
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
         StockPortfolio portfolio = new StockPortfolio();
@@ -12,21 +20,11 @@ public class Main {
             System.out.println("5. Print portfolio");
             System.out.println("6. Exit");
 
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // consume the newline character
+            int choice = getUserChoice(scanner);
 
             switch (choice) {
                 case 1:
-                    System.out.println("Enter stock symbol:");
-                    String symbol = scanner.nextLine();
-                    System.out.println("Enter stock name:");
-                    String name = scanner.nextLine();
-                    System.out.println("Enter stock price:");
-                    double price = scanner.nextDouble();
-                    System.out.println("Enter stock quantity:");
-                    int quantity = scanner.nextInt();
-                    scanner.nextLine(); // consume the newline character
-                    Stock stock = new Stock(symbol, name, price, quantity);
+                    Stock stock = getStockFromUserInput(scanner);
                     portfolio.addStock(stock);
                     System.out.println("Stock added successfully.");
                     break;
@@ -64,5 +62,24 @@ public class Main {
                     break;
             }
         }
+    }
+
+    private static int getUserChoice(Scanner scanner) {
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // consume the newline character
+        return choice;
+    }
+
+    private static Stock getStockFromUserInput(Scanner scanner) {
+        System.out.println("Enter stock symbol:");
+        String symbol = scanner.nextLine();
+        System.out.println("Enter stock name:");
+        String name = scanner.nextLine();
+        System.out.println("Enter stock price:");
+        double price = scanner.nextDouble();
+        System.out.println("Enter stock quantity:");
+        int quantity = scanner.nextInt();
+        scanner.nextLine(); // consume the newline character
+        return new Stock(symbol, name, price, quantity);
     }
 }
